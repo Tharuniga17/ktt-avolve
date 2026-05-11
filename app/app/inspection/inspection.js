@@ -8,7 +8,6 @@ const avolveHelper = require('../../../lib/helpers/avolveHelper');
 const path = require('path');
 const fs = require('fs');
 const { Op } = require('sequelize');
-const { handleApiError } = require('../../middlewares/helper');
 
 exports.inspectVehicle = async function (req, res) {
 	const ROUTE = 'app/inspections/inspectVehicle';
@@ -308,7 +307,9 @@ exports.inspectVehicle = async function (req, res) {
 
 		return res.send({ success: true, vehicleInspection: VehicleInspect });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error in vehicle inspection', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error in vehicle inspection.');
+		return res.send({ success: false, error: 'Error in vehicle inspection.' });
 	}
 }
 
@@ -386,7 +387,9 @@ exports.nearbyZones = async function (req, res) {
 		}
 		return res.send({ success: true, results: results })
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching zones', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error fetching zones.');
+		return res.send({ success: false, error: 'Error fetching zones.' });
 	}
 }
 
@@ -406,7 +409,9 @@ exports.listObservations = async function (req, res) {
 		return res.send({ success: true, results: systemConfig.data || [] })
 
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching observations', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error fetching observations.');
+		return res.send({ success: false, error: 'Error fetching observations.' });
 	}
 }
 
@@ -453,7 +458,9 @@ exports.assetLastInspection = async function (req, res) {
 
 		return res.send({ success: true, result: result });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching last inspection', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error fetching last inspection.');
+		return res.send({ success: false, error: 'Error fetching last inspection.' });
 	}
 }
 
@@ -560,7 +567,9 @@ exports.assetLastConsolidateInspection = async function (req, res) {
 
 		return res.send({ success: true, result: result });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching inspection', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error fetching inspection.');
+		return res.send({ success: false, error: 'Error fetching inspection.' });
 	}
 }
 
@@ -610,7 +619,9 @@ exports.assetInspectionHistById = async function (req, res) {
 
 		return res.send({ success: true, results: results });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching inspection history', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error fetching inspection history.');
+		return res.send({ success: false, error: 'Error fetching inspection history.' });
 	}
 }
 
@@ -716,7 +727,9 @@ exports.assetInspectionHist = async function (req, res) {
 		}
 		return res.send({ success: true, results: results });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching inspection history', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error fetching inspection history.');
+		return res.send({ success: false, error: 'Error fetching inspection history.' });
 	}
 }
 
@@ -824,7 +837,7 @@ exports.inspectionHistory = async function (req, res) {
 		let InspectHistories = await models.TyreHistory.findAll({
 			attributes: ['id', 'details', 'histDate'],
 			where: {
-				id: {[Op.in]: histIds},
+				id: histIds,
 				AccountId: VehicleInpsect.AccountId
 			}
 		});
@@ -878,7 +891,9 @@ exports.inspectionHistory = async function (req, res) {
 		}
 
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching inspection', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error fetching inspection.');
+		return res.send({ success: false, error: 'Error fetching inspection.' });
 	}
 }
 
@@ -1032,7 +1047,9 @@ exports.createTyreVerification = async (req, res) => {
 
 		return res.send({ success: true, result: TyreVerification });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error verifying tyres', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error verifying tyres.');
+		return res.send({ success: false, error: 'Error verifying tyres.' });
 	}
 };
 
@@ -1118,7 +1135,9 @@ exports.getTyreVerification = async (req, res) => {
 
 		return res.send({ success: true, result: result });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error getting tyre verification data', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error getting tyre verification data.');
+		return res.send({ success: false, error: 'Error getting tyre verification data.' });
 	}
 };
 
@@ -1164,7 +1183,9 @@ exports.updateTyreVerification = async (req, res) => {
 
 		return res.send({ success: true, skipTyreInspection: details.skipTyreInspection });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error updating tyre verification data', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error updating tyre verification data.');
+		return res.send({ success: false, error: 'Error updating tyre verification data.' });
 	}
 };
 
@@ -1251,7 +1272,9 @@ exports.getInspectionSteps = async (req, res) => {
 		return res.send({ success: true, result: result });
 
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fethcing inspections status', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error fethcing inspections status.');
+		return res.send({ success: false, error: 'Error fethcing inspections status.' });
 	}
 }
 
@@ -1407,7 +1430,9 @@ exports.completeTyreInspection = async (req, res) => {
 
 		return res.send({ success: true });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error compeleting inspections', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error compeleting inspections.');
+		return res.send({ success: false, error: 'Error compeleting inspections.' });
 	}
 }
 
@@ -1489,7 +1514,9 @@ exports.xeGetInspectionSteps = async (req, res) => {
 		return res.send({ success: true, result: result });
 
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fethcing inspections status', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error fethcing inspections status.');
+		return res.send({ success: false, error: 'Error fethcing inspections status.' });
 	}
 }
 
@@ -1576,7 +1603,9 @@ exports.xeGetTyreVerification = async (req, res) => {
 
 		return res.send({ success: true, result: result });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error getting tyre verification data', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error getting tyre verification data.');
+		return res.send({ success: false, error: 'Error getting tyre verification data.' });
 	}
 };
 
@@ -1730,7 +1759,9 @@ exports.xeCreateTyreVerification = async (req, res) => {
 
 		return res.send({ success: true, result: TyreVerification });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error verifying tyres', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error verifying tyres.');
+		return res.send({ success: false, error: 'Error verifying tyres.' });
 	}
 }
 
@@ -1885,7 +1916,9 @@ exports.xeCompleteTyreInspection = async (req, res) => {
 
 		return res.send({ success: true });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error compeleting inspections', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error compeleting inspections.');
+		return res.send({ success: false, error: 'Error compeleting inspections.' });
 	}
 }
 
@@ -1930,6 +1963,8 @@ exports.xeUpdateTyreVerification = async (req, res) => {
 
 		return res.send({ success: true, skipTyreInspection: details.skipTyreInspection });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error updating tyre verification data', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error updating tyre verification data.');
+		return res.send({ success: false, error: 'Error updating tyre verification data.' });
 	}
 }

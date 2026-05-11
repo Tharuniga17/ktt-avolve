@@ -8,7 +8,6 @@ const Excel = require("exceljs");
 const evt = require('../../../lib/event');
 const avolvePdfHelper = require('../../../lib/helpers/avolvePdf');
 const reportHelper = require('../../../lib/helpers/reports');
-const { handleApiError } = require('../../middlewares/helper');
 
 exports.iosDashboard = async function (req, res) {
 	const ROUTE = 'app/reports/iosDashboard ';
@@ -109,7 +108,9 @@ exports.iosDashboard = async function (req, res) {
 
 		return res.send({ success: true, result: result, error: null });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching data', err);
+		console.log(`Error in ${ROUTE}: ${err}`);
+		logger.RaiseLogEvent(ROUTE, 'error', err, 'Error fetching data.');
+		return res.send({ success: false, result: null, error: 'Error fetching data.' });
 	}
 }
 
@@ -276,7 +277,9 @@ exports.salesDashboard = async function (req, res) {
 		}
 		return res.send({ success: true, result: result, error: null });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching data', err);
+		console.log(`Error in ${ROUTE}: ${err}`);
+		logger.RaiseLogEvent(ROUTE, 'error', err, 'Error fetching data.');
+		return res.send({ success: false, result: null, error: 'Error fetching data.' });
 	}
 }
 
@@ -512,7 +515,9 @@ exports.missedServiceAlertsDownload = async function (req, res) {
 		return res.send({ success: true, results: resultsByAsset, destFileUrl: destFileUrl, error: null });
 
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching booking list', err);
+		console.log(`Error in ${ROUTE}: ${err}`);
+		logger.RaiseLogEvent(ROUTE, 'error', err, `Error fetching booking list`);
+		return res.send({ success: false, results: null, destFileUrl: null, error: "Error fetching booking list." });
 	}
 }
 
@@ -698,7 +703,9 @@ exports.missedServiceAlerts = async function (req, res) {
 		return res.send({ success: true, results: resultsByAccount, destFileUrl: destFileUrl, error: null });
 
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching booking list', err);
+		console.log(`Error in ${ROUTE}: ${err}`);
+		logger.RaiseLogEvent(ROUTE, 'error', err, `Error fetching booking list`);
+		return res.send({ success: false, results: null, destFileUrl: null, error: "Error fetching booking list." });
 	}
 }
 
@@ -741,14 +748,14 @@ exports.salesInventoryAlerts = async function (req, res) {
 		let Accounts = await models.Account.findAll({
 			attributes: ['id', 'name', 'tname', 'details', 'status'],
 			where: {
-				id: {[Op.in] : accountIds}
+				id: accountIds
 			}
 		});
 
 		let Tyres = await models.Tyre.findAll({
 			attributes: ['id', 'AccountId', 'lastStatus'],
 			where: {
-				AccountId: {[Op.in] : accountIds},
+				AccountId: accountIds,
 				'lastStatus.treadDepth': {
 					[Op.gte]: 0, [Op.lte]: 4
 				},
@@ -765,7 +772,7 @@ exports.salesInventoryAlerts = async function (req, res) {
 		let AplOffers = await models.AplOffer.findAll({
 			attributes: ['id', 'AccountId', 'offerType', 'subOfferType'],
 			where: {
-				AccountId: {[Op.in] : accountIds},
+				AccountId: accountIds,
 				status: 'Active'
 			},
 			order: [['id', 'desc']]
@@ -824,7 +831,9 @@ exports.salesInventoryAlerts = async function (req, res) {
 		}
 		return res.send({ success: true, results: inventoryAlerts, destFileUrl: destFileUrl, error: null });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching inventory alerts', err);
+		console.log(`Error in ${ROUTE}: ${err}`);
+		logger.RaiseLogEvent(ROUTE, 'error', err, `Error fetching inventory alerts`);
+		return res.send({ success: false, results: null, destFileUrl: null, error: "Error fetching inventory alerts." });
 	}
 }
 
@@ -866,7 +875,7 @@ exports.salesPaymentAlerts = async function (req, res) {
 		}
 
 		let whereClause = {
-			AccountId: {[Op.in]:accountIds}
+			AccountId: accountIds
 		};
 
 		if (req.query.sdate && req.query.edate && req.query.excel != 'true') {
@@ -881,7 +890,7 @@ exports.salesPaymentAlerts = async function (req, res) {
 		let AplOffers = await models.AplOffer.findAll({
 			attributes: ['id', 'AccountId', 'offerType', 'subOfferType', 'plan', 'slab'],
 			where: {
-				AccountId: {[Op.in]:accountIds},
+				AccountId: accountIds,
 				status: 'Active'
 			},
 			order: [['id', 'desc']]
@@ -988,7 +997,9 @@ exports.salesPaymentAlerts = async function (req, res) {
 		}
 		return res.send({ success: true, results: paymentAlerts, destFileUrl: destFileUrl, error: null });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching payment alerts', err);
+		console.log(`Error in ${ROUTE}: ${err}`);
+		logger.RaiseLogEvent(ROUTE, 'error', err, `Error fetching payment alerts`);
+		return res.send({ success: false, results: null, destFileUrl: null, error: "Error fetching payment alerts." });
 	}
 }
 
@@ -1042,7 +1053,9 @@ exports.listMonthlySummary = async function (req, res) {
 		}
 		return res.send({ success: true, results });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching report logs', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error fetching report logs.');
+		return res.send({ success: false, error: 'Error fetching report logs.' });
 	}
 }
 
@@ -1074,7 +1087,9 @@ exports.getMonthlySummary = async function (req, res) {
 
 		return res.send({ success: true, result: monthlySummary });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching report', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, "Error fetching report.");
+		return res.send({ success: false, error: 'Error fetching report.' });
 	}
 }
 
@@ -1131,7 +1146,9 @@ exports.updateKamNote = async function (req, res) {
 
 		return res.send({ success: true });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error updating KAM comment', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, "Error updating KAM comment.");
+		return res.send({ success: false, error: 'Error updating KAM comment.' });
 	}
 }
 
@@ -1181,7 +1198,9 @@ exports.downloadMonthlySummary = async function (req, res) {
 		}).send(Buffer.from(result.pdfBuffer));
 
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error downloading monthly customer snapshot', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, "Error downloading monthly customer snapshot.");
+		return res.send({ success: false, error: 'Error downloading monthly customer snapshot.' });
 	}
 }
 
@@ -1207,7 +1226,9 @@ exports.emailMonthlySummary = async function (req, res) {
 
 		return res.send({ success: true });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error sending monthly summary email', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, "Error sending monthly summary email.");
+		return res.send({ success: false, error: 'Error sending monthly summary email.' });
 	}
 }
 
@@ -1374,7 +1395,9 @@ exports.stakeAnalytics = async function (req, res) {
 
 		return res.send({ success: true, stakeAnalytics: stakeAnalytics });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching tyre data', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, "Error fetching tyre data.");
+		return res.send({ success: false, error: 'Error fetching tyre data.' });
 	}
 }
 
@@ -1570,7 +1593,9 @@ exports.avolveScrapAnalytics = async function (req, res) {
 
 		return res.send({ success: true, scrapAnalytics: scrapAnalytics });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching tyre data', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, "Error fetching tyre data.");
+		return res.send({ success: false, error: 'Error fetching tyre data.' });
 	}
 }
 
@@ -1639,7 +1664,7 @@ exports.downloadAvolveCustomers = async function (req, res) {
 				required: false
 			}],
 			where: {
-				AccountId: {[Op.in] : accountIds}
+				AccountId: accountIds
 			},
 			raw: true,
 			nest: true
@@ -1685,7 +1710,9 @@ exports.downloadAvolveCustomers = async function (req, res) {
 
 		return await avolveHelper.avolveCustomerDetailsDumpExcelApp(results, false, res, req.query.channel);
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching customer details dump', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, "Error fetching customer details dump.");
+		return res.send({ success: false, error: 'Error fetching customer details dump.' });
 	}
 }
 
@@ -1739,7 +1766,9 @@ exports.downloadMFCustomers = async function (req, res) {
 
 		return await avolveHelper.mfCustomerDetailsDumpExcelApp(results, false, res);
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching customer details dump', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, "Error fetching customer details dump.");
+		return res.send({ success: false, error: 'Error fetching customer details dump.' });
 	}
 }
 
@@ -1790,7 +1819,7 @@ exports.mfDashboard = async function (req, res) {
 				}
 			}],
 			where: {
-				AccountId: {[Op.in]:accountIds},
+				AccountId: accountIds,
 				active: true,
 				remove: false,
 				[Op.and]: [models.sequelize.literal(`"Asset"."details"->'axleProfile'->'mf'->>'active' = 'true'`)]
@@ -1824,7 +1853,7 @@ exports.mfDashboard = async function (req, res) {
 		let Tyres = await models.Tyre.findAll({
 			attributes: ['id', 'tyreStatus', 'mfgBy', 'model', 'codeSize', 'radial', 'AssetId'],
 			where: {
-				AccountId: {[Op.in]:accountIds},
+				AccountId: accountIds,
 				tyreStatus: [1, 2, 4, 5, 6], //In Use, Removed, Retreaded, Scrap, Scrap Complete
 				'details.mf': true
 			},
@@ -1863,7 +1892,9 @@ exports.mfDashboard = async function (req, res) {
 
 		return res.send({ success: true, result: { vehicleSummary: vehicleSummary, tyreSummary: tyreSummary } });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching data', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, `Error fetching data`);
+		return res.send({ success: false, error: "Error fetching data." });
 	}
 }
 
@@ -2128,7 +2159,9 @@ exports.tyrePerformanceAnalytics = async function (req, res) {
 
 		return res.send({ success: true, result: result });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching tyres', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, `Error fetching tyres`);
+		return res.send({ success: false, error: 'Error fetching tyres' });
 	}
 }
 
@@ -2138,7 +2171,9 @@ exports.performaceAnalyticsInfo = async function (req, res) {
 		let template = "<html><h2 style=\"font-size: 16px; font-weight: 600; text-align: center;\">Projected Mileage Estimation</h2><br>Mileage Projection is calculated on the basis of actual kms driven by the tyres and their utilized tread depth.<br><br>While running, tyre performs differently based on their tread wear. Based on which, we have segregated Tyre performance in 4 stages.<br><br><b>0-30% Tread Wear :</b><br>Initial break in of tyres do not warrant to predict/project the service life of any specific tyre.<br><br><b>31-50% Tread Wear :</b><br>It's not practical to accurately predict/project the service life of any specific tyre in chronological time since service conditions vary widely.<b><br><br>51-85% Tread Wear :</b><br>It's practical to accurately predict/project the service life of any specific tyre based on its wear rate stability.<br><br><b>86% &amp; above Tread Wear :</b><br>Mileage projection accuracy reaches its peak due to more actual tyre running, comprehensive wear data and established patterns.<br><br><br><i><font color='#979797'>Tyres are built to deliver thousands of kms of excellent service. For maximum benefit, tyres must be maintained properly to avoid any tyre damage that may result in premature removal from service before the tread is worn out upto its minimum (TWI) depth.</font></i><html>";
 		return res.send({ success: true, result: template });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching info template', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, `Error fetching info template`);
+		return res.send({ sucess: false, error: "Error fetching info" });
 	}
 }
 
@@ -2171,7 +2206,7 @@ exports.mfInUseTyres = async function (req, res) {
 			input: {
 				masterAccountId: res.locals.masterAccountId,
 				tempTable: tempTableName,
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				app: true,
 				fromApp: ['FM', 'FO'].includes(res.locals.role),
 				deviceId: req.query.deviceId,
@@ -2188,7 +2223,7 @@ exports.mfInUseTyres = async function (req, res) {
 
 		evt.events.emit(`${consumerKey}-app`, {
 			input: {
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				deviceId: req.query.deviceId,
 				emailReport: true,
 				tyreStatus: "In Use",
@@ -2204,7 +2239,9 @@ exports.mfInUseTyres = async function (req, res) {
 
 		return res.send({ success: true, message: `Report generation initiated. You can download it from the Downloads menu once processing is completed.` });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error downloading the summary of used tyres', err);
+		console.log(`Error in ${ROUTE}: ${err}`);
+		logger.RaiseLogEvent(ROUTE, "error", err, `Error downloading the summary of used tyres`);
+		return res.send({ success: false, error: "Error downloading the summary of used tyres." });
 	}
 }
 
@@ -2234,7 +2271,7 @@ exports.downloadServiceSummary = async function (req, res) {
 			input: {
 				masterAccountId: res.locals.masterAccountId,
 				tempTable: tempTableName,
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				fromApp: ['FM', 'FO'].includes(res.locals.role),
 				deviceId: req.query.deviceId,
 				typeId: 23,
@@ -2249,7 +2286,7 @@ exports.downloadServiceSummary = async function (req, res) {
 
 		evt.events.emit(`${consumerKey}-app`, {
 			input: {
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				sdate: moment(req.query.sdate).format('YYYY-MM-DD'),
 				edate: moment(req.query.edate).format('YYYY-MM-DD'),
 				deviceId: req.query.deviceId,
@@ -2266,7 +2303,9 @@ exports.downloadServiceSummary = async function (req, res) {
 
 		return res.send({ success: true, message: `Report generation initiated. You can download it from the Downloads menu once processing is completed.` });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error downloading service summary', err);
+		console.log(`Error in ${ROUTE}: ${err}`);
+		logger.RaiseLogEvent(ROUTE, 'error', err, `Error downloading service summary`);
+		return res.send({ success: false, error: "Error downloading service summary." });
 	}
 }
 
@@ -2299,7 +2338,7 @@ exports.mfNotInUseTyres = async function (req, res) {
 			input: {
 				masterAccountId: res.locals.masterAccountId,
 				tempTable: tempTableName,
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				app: true,
 				fromApp: ['FM', 'FO'].includes(res.locals.role),
 				deviceId: req.query.deviceId,
@@ -2316,7 +2355,7 @@ exports.mfNotInUseTyres = async function (req, res) {
 
 		evt.events.emit(`${consumerKey}-app`, {
 			input: {
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				deviceId: req.query.deviceId,
 				emailReport: true,
 				tyreStatus: "Not In Use",
@@ -2332,7 +2371,9 @@ exports.mfNotInUseTyres = async function (req, res) {
 
 		return res.send({ success: true, message: `Report generation initiated. You can download it from the Downloads menu once processing is completed.` });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error downloading the summary of not used tyres', err);
+		console.log(`Error in ${ROUTE}: ${err}`);
+		logger.RaiseLogEvent(ROUTE, "error", err, `Error downloading the summary of not used tyres`);
+		return res.send({ success: false, error: "Error downloading the summary of not used tyres." });
 	}
 }
 
@@ -2365,7 +2406,7 @@ exports.mfScrappedTyres = async function (req, res) {
 			input: {
 				masterAccountId: res.locals.masterAccountId,
 				tempTable: tempTableName,
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				app: true,
 				fromApp: ['FM', 'FO'].includes(res.locals.role),
 				deviceId: req.query.deviceId,
@@ -2382,7 +2423,7 @@ exports.mfScrappedTyres = async function (req, res) {
 
 		evt.events.emit(`${consumerKey}-app`, {
 			input: {
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				deviceId: req.query.deviceId,
 				emailReport: true,
 				tyreStatus: "Scrapped",
@@ -2399,7 +2440,9 @@ exports.mfScrappedTyres = async function (req, res) {
 		return res.send({ success: true, message: `Report generation initiated. You can download it from the Downloads menu once processing is completed.` });
 
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error downloading the scrapped tyres dump', err);
+		console.log(`Error in ${ROUTE}: ${err}`);
+		logger.RaiseLogEvent(ROUTE, "error", err, `Error downloading the scrapped tyres dump`);
+		return res.send({ success: false, error: "Error downloading the scrapped tyres dump." });
 	}
 }
 
@@ -2455,7 +2498,9 @@ exports.mfVehicles = async function (req, res) {
 		return res.send({ success: true, message: `Report generation initiated. You can download it from the Downloads menu once processing is completed.` });
 
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error downloading the mf vehicles', err);
+		console.log(`Error in ${ROUTE}: ${err}`);
+		logger.RaiseLogEvent(ROUTE, "error", err, `Error downloading the mf vehicles`);
+		return res.send({ success: false, error: "Error downloading the mf vehicles." });
 	}
 }
 
@@ -2485,7 +2530,7 @@ exports.downloadTyreAnalytics = async function (req, res) {
 			input: {
 				masterAccountId: res.locals.masterAccountId,
 				tempTable: tempTableName,
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				fromApp: ['FM', 'FO'].includes(res.locals.role),
 				deviceId: req.query.deviceId,
 				typeId: 1,
@@ -2500,7 +2545,7 @@ exports.downloadTyreAnalytics = async function (req, res) {
 
 		evt.events.emit(`${consumerKey}-app`, {
 			input: {
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				deviceId: req.query.deviceId,
 				emailReport: true,
 				typeId: 1 // tyre analytics
@@ -2515,7 +2560,9 @@ exports.downloadTyreAnalytics = async function (req, res) {
 
 		return res.send({ success: true, message: `Report generation initiated. You can download it from the Downloads menu once processing is completed.` });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error downloading the tyre analytics dump', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, "error", error, `Error downloading the tyre analytics dump`);
+		return res.send({ success: false, error: "Error downloading the tyre analytics dump." });
 	}
 }
 
@@ -2546,7 +2593,7 @@ exports.downloadScrapAnalytics = async function (req, res) {
 			input: {
 				masterAccountId: res.locals.masterAccountId,
 				tempTable: tempTableName,
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				fromApp: ['FM', 'FO'].includes(res.locals.role),
 				deviceId: req.query.deviceId,
 				typeId: 6,
@@ -2576,7 +2623,9 @@ exports.downloadScrapAnalytics = async function (req, res) {
 
 		return res.send({ success: true, message: `Report generation initiated. You can download it from the Downloads menu once processing is completed.` });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error downloading the scrap analytics dump', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, "Error downloading the scrap analytics dump.");
+		return res.send({ success: false, error: 'Error downloading the scrap analytics dump.' });
 	}
 }
 
@@ -2607,7 +2656,7 @@ exports.downloadStakeAnalytics = async function (req, res) {
 			input: {
 				masterAccountId: res.locals.masterAccountId,
 				tempTable: tempTableName,
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				fromApp: ['FM', 'FO'].includes(res.locals.role),
 				deviceId: req.query.deviceId,
 				typeId: 10,
@@ -2622,7 +2671,7 @@ exports.downloadStakeAnalytics = async function (req, res) {
 
 		evt.events.emit(`${consumerKey}-app`, {
 			input: {
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				deviceId: req.query.deviceId,
 				emailReport: true,
 				typeId: 10 // stake analytics
@@ -2637,7 +2686,9 @@ exports.downloadStakeAnalytics = async function (req, res) {
 
 		return res.send({ success: true, message: `Report generation initiated. You can download it from the Downloads menu once processing is completed.` });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error downloading the scrap analytics dump', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, "Error downloading the scrap analytics dump.");
+		return res.send({ success: false, error: 'Error downloading the scrap analytics dump.' });
 	}
 }
 
@@ -2668,7 +2719,7 @@ exports.downloadInspectionAnalytics = async function (req, res) {
 			input: {
 				masterAccountId: res.locals.masterAccountId,
 				tempTable: tempTableName,
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				fromApp: ['FM', 'FO'].includes(res.locals.role),
 				deviceId: req.query.deviceId,
 				typeId: 11,
@@ -2684,7 +2735,7 @@ exports.downloadInspectionAnalytics = async function (req, res) {
 
 		evt.events.emit(`${consumerKey}-app`, {
 			input: {
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				deviceId: req.query.deviceId,
 				emailReport: true,
 				typeId: 11 // inspection analytics
@@ -2699,7 +2750,9 @@ exports.downloadInspectionAnalytics = async function (req, res) {
 
 		return res.send({ success: true, message: `Report generation initiated. You can download it from the Downloads menu once processing is completed.` });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error downloading the inspection analytics dump', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, "Error downloading the inspection analytics dump.");
+		return res.send({ success: false, error: 'Error downloading the inspection analytics dump.' });
 	}
 }
 
@@ -2730,7 +2783,7 @@ exports.downloadPerformanceAnalytics = async function (req, res) {
 			input: {
 				masterAccountId: res.locals.masterAccountId,
 				tempTable: tempTableName,
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				fromApp: ['FM', 'FO'].includes(res.locals.role),
 				deviceId: req.query.deviceId,
 				typeId: 25,
@@ -2746,7 +2799,7 @@ exports.downloadPerformanceAnalytics = async function (req, res) {
 
 		evt.events.emit(`${consumerKey}-app`, {
 			input: {
-				accountIds: {[Op.in]:AccountIds},
+				accountIds: AccountIds,
 				deviceId: req.query.deviceId,
 				emailReport: true,
 				conditions: req.query.condition ? [req.query.condition] : [],
@@ -2762,7 +2815,9 @@ exports.downloadPerformanceAnalytics = async function (req, res) {
 
 		return res.send({ success: true, message: `Report generation initiated. You can download it from the Downloads menu once processing is completed.` });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error downloading the performance analytics dump', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, "Error downloading the performance analytics dump.");
+		return res.send({ success: false, error: 'Error downloading the performance analytics dump.' });
 	}
 }
 
@@ -2809,7 +2864,9 @@ exports.downloadDraftCustomers = async function (req, res) {
 
 		return await avolveHelper.draftCustomersExcelDump(results, false, res);
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching customer details dump', error);
+		console.log(`Error in ${ROUTE}: ${error}`);
+		logger.RaiseLogEvent(ROUTE, 'error', error, "Error fetching customer details dump.");
+		return res.send({ success: false, error: 'Error fetching customer details dump.' });
 	}
 }
 
@@ -2827,7 +2884,8 @@ exports.apolloFleetInventoryAnalytics = async function (req, res) {
 			return res.send({ success: true, inventoryAnalytics: result });
 		}
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching report', error);
+		logger.RaiseLogEvent(ROUTE, 'error', error, `Error fetching report.`);
+		return res.send({ success: false, error: 'Error fetching report.' })
 	}
 }
 
@@ -2845,7 +2903,8 @@ exports.apolloFleetScrapAnalytics = async function (req, res) {
 			return res.send({ success: true, scrapAnalytics: result });
 		}
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching report', error);
+		logger.RaiseLogEvent(ROUTE, 'error', error, `Error fetching report.`);
+		return res.send({ success: false, error: 'Error fetching report.' })
 	}
 }
 
@@ -2872,7 +2931,8 @@ exports.apolloFleetStakeAnalytics = async function (req, res) {
 			return res.send({ success: true, stakeAnalytics: result });
 		}
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching report', error);
+		logger.RaiseLogEvent(ROUTE, 'error', error, 'Error fetching report.');
+		return res.send({ success: false, error: 'Error fetching report.' })
 	}
 }
 
@@ -2894,7 +2954,9 @@ exports.apolloFleetInspectionAnalytics = async function (req, res) {
 			return res.send({ success: true, inspectionAnalytics: result });
 		}
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching report', error);
+		console.log(`Error in ${ROUTE}`, error);
+		logger.RaiseLogEvent(ROUTE, 'error', error, `Error fetching report`);
+		return res.send({ success: false, error: 'Error fetching report.' });
 	}
 }
 
