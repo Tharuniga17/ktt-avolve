@@ -93,7 +93,7 @@ exports.countByGeozone = async function (req, res) {
 
 		let missedServiceSchCount = await models.ServiceBooking.count({
 			where: {
-				AccountId: accountIds,
+				AccountId: {[Op.in]: accountIds},
 				type: [0, 1],
 				status: [0, 1, 4], //Scheduled, Arrived, PendingApproval
 				date: {
@@ -168,7 +168,7 @@ exports.countByGeozone = async function (req, res) {
 		return res.send({ success: true, results: results });
 
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching count', error);
+		return handleApiError(res, ROUTE, 'Error fetching count', err);
 	}
 }
 
@@ -275,7 +275,7 @@ exports.listByStatus = async function (req, res) {
 		return res.send({ success: true, results: Assets });
 
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching assets', error);
+		return handleApiError(res, ROUTE, 'Error fetching assets', err);
 	}
 }
 
@@ -318,7 +318,7 @@ exports.updateOdo = async function (req, res) { //n
 
 		return res.send({ success: true, Asset: updateAsset });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error updating odo', error);
+		return handleApiError(res, ROUTE, 'Error updating odo', err);
 	}
 }
 
@@ -398,7 +398,7 @@ exports.deleteAssets = async function (req, res) {
 		return res.send({ success: true });
 
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching vehicles', error);
+		return handleApiError(res, ROUTE, 'Error fetching vehicles', err);
 	}
 }
 
@@ -438,7 +438,7 @@ exports.listByUser = async function (req, res) {
 		let whereClause = {
 			active: true,
 			remove: false,
-			AccountId: accountIds
+			AccountId: {[Op.in]: accountIds}
 		}
 
 		if (req.query.excel == 'true' && req.query.offer) {
@@ -488,7 +488,7 @@ exports.listByUser = async function (req, res) {
 				where: {
 					AssetId: Assets.map(x => x.id),
 					transaction: 'Fitment',
-					AccountId: accountIds,
+					AccountId: {[Op.in] : accountIds},
 				}
 			});
 		}
@@ -574,7 +574,7 @@ exports.listByUser = async function (req, res) {
 		return res.send({ success: true, results: results, error: null });
 
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching assets', error);
+		return handleApiError(res, ROUTE, 'Error fetching assets', err);
 	}
 }
 
@@ -632,7 +632,7 @@ exports.listByUserDownload = async function (req, res) {
 
 		return res.send({ success: true, message: `Report generation initiated. You can download it from the Downloads menu once processing is completed.` });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching assets', error);
+		return handleApiError(res, ROUTE, 'Error fetching assets', err);
 	}
 }
 
@@ -808,7 +808,7 @@ exports.payKmList = async function (req, res) {
 
 		return res.send({ success: true, results: results });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching assets', error);
+		return handleApiError(res, ROUTE, 'Error fetching assets', err);
 	}
 }
 
@@ -932,7 +932,7 @@ exports.monitoredFitment = async function (req, res) {
 
 		return res.send({ success: true, message: message, result: Asset });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error Marking MF', error);
+		return handleApiError(res, ROUTE, 'Error Marking MF', err);
 	}
 }
 
@@ -986,7 +986,7 @@ exports.listMFVehicles = async function (req, res) {
 
 		return res.send({ success: true, results: results });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching mf vehicles', error);
+		return handleApiError(res, ROUTE, 'Error fetching mf vehicles', err);
 	}
 }
 
@@ -1140,7 +1140,7 @@ exports.getVehicle = async function (req, res) {
 		Asset.showVehicleInspection = showVehicleInspection;
 		return res.send({ success: true, asset: Asset });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching vehicles', error);
+		return handleApiError(res, ROUTE, 'Error fetching vehicles', err);
 	}
 }
 
@@ -1333,7 +1333,7 @@ exports.getApolloFleetAsset = async function (req, res) {
 		Asset.lastInspectionDate = lastInspectionDate;
 		return res.send({ success: true, asset: Asset });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching assets', error);
+		return handleApiError(res, ROUTE, 'Error fetching assets', err);
 	}
 }
 
@@ -1516,7 +1516,7 @@ exports.createAsset = async function (req, res) {
 
 		return res.send({ success: true, asset: asset });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching vehicles', error);
+		return handleApiError(res, ROUTE, 'Error fetching vehicles', err);
 	}
 }
 
@@ -1616,7 +1616,7 @@ exports.listCustomerAssets = async function (req, res) {
 			return res.send({ success: true, results: assetsList });
 		}
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching assets', error);
+		return handleApiError(res, ROUTE, 'Error fetching assets', err);
 	}
 }
 
@@ -1832,7 +1832,7 @@ exports.listAssets = async function (req, res) {
 
 		return res.send({ success: true, results: results });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching assets', error);
+		return handleApiError(res, ROUTE, 'Error fetching assets', err);
 	}
 }
 
@@ -1856,7 +1856,7 @@ exports.listCount = async function (req, res) {
 
 		return res.send({ success: true, result: result });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching count', error);
+		return handleApiError(res, ROUTE, 'Error fetching count', err);
 	}
 }
 
@@ -1907,7 +1907,7 @@ exports.listAxleProfiles = async function (req, res) {
 
 		return res.send({ success: true, results: axleProfiles });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching axle profiles', error);
+		return handleApiError(res, ROUTE, 'Error fetching axle profiles', err);
 	}
 }
 

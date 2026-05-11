@@ -80,9 +80,7 @@ exports.listPaykm = async function (req, res) {
 
 		return res.send({ success: true, results: Accounts });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, 'Error fetching customers.');
-		return res.send({ success: false, error: 'Error fetching customers.' });
+		return handleApiError(res, ROUTE, 'Error fetching customers', err);
 	}
 }
 
@@ -149,9 +147,7 @@ exports.list = async function (req, res) {
 
 		return res.send({ success: true, results: Accounts });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}`, err);
-		RaiseLogEvent(ROUTE, 'error', err, `Error: ${err.message}`);
-		return res.send({ success: false, error: 'Error fetching data.' });
+		return handleApiError(res, ROUTE, 'Error fetching data', err);
 	}
 }
 
@@ -190,8 +186,7 @@ exports.listVendors = async function (req, res) {
 
 		return res.send({ success: true, results: [...STPVendors, ...Dealers] });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, 'Error fetching vendors.');
+		return handleApiError(res, ROUTE, 'Error fetching vendors', err);
 	}
 }
 
@@ -289,9 +284,7 @@ exports.listByUser = async function (req, res) {
 
 		return res.send({ success: true, results: results });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, `Data received: ${JSON.stringify(req.query)}`);
-		return res.send({ success: false, error: 'Error fetching data.' });
+		return handleApiError(res, ROUTE, 'Error fetching data', err);
 	}
 }
 
@@ -337,9 +330,7 @@ exports.listByUserWeb = async function (req, res) {
 
 		return res.send({ success: true, results: Accounts });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, `Data received: ${JSON.stringify(req.query)}`);
-		return res.send({ success: false, error: 'Error fetching customers.' });
+		return handleApiError(res, ROUTE, 'Error fetching customers', err);
 	}
 }
 
@@ -501,9 +492,7 @@ exports.getAccountSummary = async function (req, res) {
 
 		return res.send({ success: true, result: result });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, `Error: ${err.message}`);
-		return res.send({ success: false, error: 'Error fetching data.' });
+		return handleApiError(res, ROUTE, 'Error fetching data', err);
 	}
 }
 
@@ -632,9 +621,7 @@ exports.getServiceMaster = async function (req, res) {
 		return res.end();
 
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, `Error fetching data`);
-		return res.send({ success: false, error: 'Error fetching data.' });
+		return handleApiError(res, ROUTE, 'Error fetching data', err);
 	}
 }
 
@@ -739,9 +726,7 @@ exports.getOffer = async function (req, res) {
 
 		return res.send({ success: true, result: result })
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, `Error fetching data`);
-		return res.send({ success: false, error: 'Error fetching data.' });
+		return handleApiError(res, ROUTE, 'Error fetching data', err);
 	}
 }
 
@@ -951,9 +936,7 @@ exports.serviceConfigBulkUpdate = async function (req, res) {
 		}
 
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, `Error fetching data`);
-		return res.send({ success: false, error: 'Error fetching data.' });
+		return handleApiError(res, ROUTE, 'Error fetching data', err);
 	}
 }
 
@@ -1129,9 +1112,7 @@ exports.psiConfigBulkUpdate = async function (req, res) {
 			}
 		}
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, `Error uploading service config`);
-		return res.send({ success: false, error: 'Error uploading service config.' });
+		return handleApiError(res, ROUTE, 'Error uploading service config', err);
 	}
 }
 
@@ -1232,9 +1213,7 @@ exports.getAccount = async function (req, res) {
 		}
 		return res.send({ success: true, results: results, tname: Account.tname });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, 'Error fetching account.');
-		return res.send({ success: false, error: 'Error fetching account.' });
+		return handleApiError(res, ROUTE, 'Error fetching account', err);
 	}
 }
 
@@ -1284,9 +1263,7 @@ exports.syncServiceMaster = async function (req, res) {
 		return res.send({ success: true, message: 'Service Master Refresh Batch Process is initiated. Please check after few mins.' });
 
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, 'Error initiating process.');
-		return res.send({ success: false, error: 'Error initiating process.' });
+		return handleApiError(res, ROUTE, 'Error initiating process', err);
 	}
 }
 
@@ -1384,9 +1361,7 @@ exports.syncIPMaster = async function (req, res) {
 		}
 		return res.send({ success: true, message: 'IP Master Refresh Batch Process is initiated. Please check after few mins.' })
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, 'Error Batch processing.');
-		return res.send({ success: false, error: 'Error Batch processing.' });
+		return handleApiError(res, ROUTE, 'Error Batch processing', err);
 	}
 }
 
@@ -1620,9 +1595,7 @@ exports.createWeb = async function (req, res) {
 
 		return res.send({ success: true });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, 'Error creating customer.');
-		return res.send({ success: false, error: 'Error creating customer.' });
+		return handleApiError(res, ROUTE, 'Error creating customer', err);
 	}
 }
 
@@ -1828,9 +1801,7 @@ exports.ftsCreate = async function (req, res) {
 
 		return res.send({ success: true });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, 'Error creating customer.');
-		return res.send({ success: false, error: 'Error creating customer.' });
+		return handleApiError(res, ROUTE, 'Error creating customer', err);
 	}
 }
 
@@ -1928,9 +1899,7 @@ exports.getOfferConfig = async function (req, res) {
 
 		return res.send({ success: true, result: result });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, 'Error fetching config.');
-		return res.send({ success: false, error: 'Error fetching config.' });
+		return handleApiError(res, ROUTE, 'Error fetching config', err);
 	}
 }
 
@@ -2311,9 +2280,7 @@ exports.ftsBulkCreate = async function (req, res) {
 		}
 
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, 'Error creating customers');
-		return res.send({ success: false, err: 'Something went wrong' });
+		return handleApiError(res, ROUTE, 'Error creating customers', err);
 	}
 }
 
@@ -2348,9 +2315,7 @@ exports.count = async function (req, res) {
 
 		return res.send({ success: true, result: { created: tisCreated, draft: draft } });
 	} catch (error) {
-		console.log(`Error in ${ROUTE}: ${error}`);
-		RaiseLogEvent(ROUTE, 'error', error, 'Error fetching customers count');
-		return res.send({ success: false, error: 'Error fetching customers count' });
+		return handleApiError(res, ROUTE, 'Error fetching customers count', error);
 	}
 }
 
@@ -2431,9 +2396,7 @@ exports.vehicleGroupsList = async function (req, res) {
 
 		return res.send({ success: true, axleConfig: matchedAxleConfig });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, 'Error fetching vehicle groups');
-		return res.send({ success: false, error: 'Error fetching vehicle groups' });
+		return handleApiError(res, ROUTE, 'Error fetching vehicle groups', err);
 	}
 }
 
@@ -2474,13 +2437,12 @@ exports.draftList = async function (req, res) {
 
 		return res.send({ success: true, results: AplAccountDrafts });
 	} catch (error) {
-		console.log(`Error in ${ROUTE}: ${error}`);
-		RaiseLogEvent('avolve/accounts/draftList', 'error', error, 'Error fetching accounts drafts');
-		return res.send({ success: false, error: 'Error fetching accounts drafts' });
+		return handleApiError(res, ROUTE, 'Error fetching accounts drafts', error);
 	}
 }
 
 exports.getDraftAccount = async function (req, res) {
+	const ROUTE = 'app/accounts/getDraftAccount';
 	try {
 		if (!['KAM'].includes(res.locals.role)) {
 			return res.send({ success: false, error: 'Not authorized' });
@@ -2510,9 +2472,7 @@ exports.getDraftAccount = async function (req, res) {
 
 		return res.send({ success: true, result: result });
 	} catch (error) {
-		console.log(`Error in ${ROUTE}: ${error}`);
-		RaiseLogEvent(ROUTE, 'error', error, 'Error fetching draft account');
-		return res.send({ success: false, error: 'Error fetching draft account' });
+		return handleApiError(res, ROUTE, 'Error fetching draft account', error);
 	}
 }
 
@@ -2560,9 +2520,7 @@ exports.draftUpdate = async function (req, res) {
 
 		return res.send({ success: true });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, 'Error updating draft account.');
-		return res.send({ success: false, error: 'Error updating draft account.' });
+		return handleApiError(res, ROUTE, 'Error updating draft account', err);
 	}
 }
 
@@ -2828,9 +2786,7 @@ exports.tisCreate = async function (req, res) {
 
 		return res.send({ success: true });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, 'Error creating customer.');
-		return res.send({ success: false, error: 'Error creating customer.' });
+		return handleApiError(res, ROUTE, 'Error creating customer', err);
 	}
 }
 
@@ -3132,9 +3088,7 @@ exports.getOfferWeb = async function (req, res) {
 
 		return res.send({ success: true, result: result });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, `Error fetching customer offer`);
-		return res.send({ success: false, error: 'Error fetching customer offer.' });
+		return handleApiError(res, ROUTE, 'Error fetching customer offer', err);
 	}
 }
 
@@ -3332,9 +3286,7 @@ exports.offerUpdate = async (req, res) => {
 		await AplOffer.update(toUpdate);
 		return res.send({ success: true });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, `Error in updating offer`);
-		return res.send({ success: false, error: 'Error in updating offer' });
+		return handleApiError(res, ROUTE, 'Error in updating offer', err);
 	}
 }
 
@@ -3377,9 +3329,7 @@ exports.listCustomers = async function (req, res) {
 		}
 		return res.send({ success: true, results: vendors });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, `Error fetching data`);
-		return res.send({ success: false, error: 'Error fetching data.' });
+		return handleApiError(res, ROUTE, 'Error fetching data', err);
 	}
 }
 
@@ -3400,9 +3350,7 @@ exports.serviceConfig = async function (req, res) {
 
 		return res.send({ success: true, serviceConfig: Account.serviceConfig ? Account.serviceConfig : {} });
 	} catch (error) {
-		console.log(`Error in ${ROUTE}: ${error}`);
-		RaiseLogEvent(ROUTE, 'error', error, `Error fetching serviceConfig`);
-		return res.send({ success: false, error: 'Error fetching serviceConfig.' });
+		return handleApiError(res, ROUTE, 'Error fetching serviceConfig', error);
 	}
 }
 

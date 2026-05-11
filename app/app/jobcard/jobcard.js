@@ -6,6 +6,7 @@ const evt = require('../../../lib/event');
 const md5 = require('../../../lib/md5').md5;
 const { RaiseLogEvent } = require('../../../lib/helpers/rmqlog');
 const { Op } = require('sequelize');
+const { handleApiError } = require('../../middlewares/helper');
 
 exports.create = async function (req, res) {
     const ROUTE = 'app/jobcards/create';
@@ -335,9 +336,7 @@ exports.create = async function (req, res) {
         if (err.message && err.message.startsWith('Job card already')) {
             errMsg = err.message;
         }
-        console.log(`Error in ${ROUTE}: ${err}`);
-        RaiseLogEvent(ROUTE, 'error', err, `Error creating jobcard.`);
-        return res.send({ success: false, error: errMsg });
+        return handleApiError(res, ROUTE, 'Error creating jobcard', err);
     }
 }
 
@@ -444,9 +443,7 @@ exports.listByStatus = async function (req, res) {
         return res.send({ success: true, results: Jobcards });
 
     } catch (err) {
-        console.log(`Error in ${ROUTE}: ${err}`);
-        RaiseLogEvent(ROUTE, 'error', err, `Error fetching jobcards list`);
-        return res.send({ success: false, error: "Error fetching jobcards list." });
+        return handleApiError(res, ROUTE, 'Error fetching jobcards list', err);
     }
 }
 
@@ -525,9 +522,7 @@ exports.assetJobHist = async function (req, res) {
         return res.send({ success: true, results: results });
         //#endregion
     } catch (err) {
-        console.log(`Error in ${ROUTE}: ${err}`);
-        RaiseLogEvent(ROUTE, 'error', err, `Error fetching vehicle jobcards history.`);
-        return res.send({ success: false, error: "Error fetching vehicle jobcards history." });
+        return handleApiError(res, ROUTE, 'Error fetching vehicle jobcards history', err);
     }
 }
 
@@ -665,9 +660,7 @@ exports.getServiceLogs = async function (req, res) {
         let fileName = `Avolve_ServiceLog_Report`;
         return await avolveHelper.avolveExcelExport(fileName, columnHeaders, excelResults, req, res);
     } catch (error) {
-        console.log(`Error in ${ROUTE}: ${error}`);
-        RaiseLogEvent(ROUTE, 'error', error, `Error getting serviceLog summary report.`);
-        return res.send({ success: false, error: "Error getting serviceLog summary report." });
+        return handleApiError(res, ROUTE, 'Error getting serviceLog summary report', error);
     }
 }
 
@@ -815,9 +808,7 @@ exports.assetJobHistById = async function (req, res) {
 
         return res.send({ success: true, result: result });
     } catch (err) {
-        console.log(`Error in ${ROUTE}: ${err}`);
-        RaiseLogEvent(ROUTE, 'error', err, `Error fetching vehicle jobcard history.`);
-        return res.send({ success: false, error: "Error fetching vehicle jobcard history." });
+        return handleApiError(res, ROUTE, 'Error fetching vehicle jobcard history', err);
     }
 }
 
@@ -1000,9 +991,7 @@ exports.get = async function (req, res) {
         return res.send({ success: true, result: AplJobCard });
 
     } catch (err) {
-        console.log(`Error in ${ROUTE}: ${err}`);
-        RaiseLogEvent(ROUTE, 'error', err, `Error fetching jobcard.`);
-        return res.send({ success: false, error: "Error fetching jobcard." });
+        return handleApiError(res, ROUTE, 'Error fetching jobcard', err);
     }
 }
 
@@ -1158,9 +1147,7 @@ exports.getLog = async function (req, res) {
         return res.send({ success: true, result: result });
 
     } catch (err) {
-        console.log(`Error in ${ROUTE}: ${err}`);
-        RaiseLogEvent(ROUTE, 'error', err, `Error fetching jobcard.`);
-        return res.send({ success: false, error: "Error fetching jobcard." });
+        return handleApiError(res, ROUTE, 'Error fetching jobcard', err);
     }
 }
 
@@ -1779,9 +1766,7 @@ exports.execute = async function (req, res) {
         return res.send({ success: true, jobcard: updJobCard });
 
     } catch (err) {
-        console.log(`Error in ${ROUTE}: ${err}`);
-        RaiseLogEvent(ROUTE, 'error', err, "Error executing jobcard");
-        return res.send({ success: false, error: "Error executing jobcard" });
+        return handleApiError(res, ROUTE, 'Error executing jobcard', err);
     }
 }
 
@@ -1835,9 +1820,7 @@ exports.approve = async function (req, res) {
 
         return res.send({ success: true, jobcard: updJobCard });
     } catch (err) {
-        console.log(`Error in ${ROUTE}: ${err}`);
-        RaiseLogEvent(ROUTE, 'error', err, "Error approving jobcard");
-        return res.send({ success: false, error: "Error approving jobcard" })
+        return handleApiError(res, ROUTE, 'Error approving jobcard', err);
     }
 }
 
@@ -1926,9 +1909,7 @@ exports.complete = async function (req, res) {
 
         return res.send({ success: true, jobcard: updJobCard });
     } catch (err) {
-        console.log(`Error in ${ROUTE}: ${err}`);
-        RaiseLogEvent(ROUTE, 'error', err, "Error completing jobcard");
-        return res.send({ success: false, error: "Error completing jobcard" })
+        return handleApiError(res, ROUTE, 'Error completing jobcard', err);
     }
 }
 
@@ -2064,9 +2045,7 @@ exports.gatepass = async function (req, res) {
 
         return res.send({ success: true, jobcard: updJobCard });
     } catch (err) {
-        console.log(`Error in ${ROUTE}: ${err}`);
-        RaiseLogEvent(ROUTE, 'error', err, `Error closing jobcard`);
-        return res.send({ success: false, error: "Error closing jobcard" })
+        return handleApiError(res, ROUTE, 'Error closing jobcard', err);
     }
 }
 
@@ -2164,9 +2143,7 @@ exports.getJobCardbyAsset = async function (req, res) {
             return res.send({ success: true });
         }
     } catch (error) {
-        console.log(`Error in ${ROUTE}: ${err}`);
-        RaiseLogEvent(ROUTE, 'error', err, "Error fetching jobcard.");
-        return res.send({ success: false, error: "Error fetching jobcard." })
+        return handleApiError(res, ROUTE, 'Error fetching jobcard', error);
     }
 }
 

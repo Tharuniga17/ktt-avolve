@@ -4,6 +4,7 @@ const avolveHelper = require('../../../lib/helpers/avolveHelper');
 const evt = require('../../../lib/event');
 const cities = require('../../../config/cities.json');
 const { Op } = require('sequelize')
+const { handleApiError } = require('../../middlewares/helper');
 
 exports.listByRole = async function (req, res) {
 	const ROUTE = 'app/geozones/listByRole';
@@ -60,9 +61,7 @@ exports.listByRole = async function (req, res) {
 		return res.send({ success: true, results: results });
 
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		logger.RaiseLogEvent(ROUTE, 'error', err, `Data fetching workshops`);
-		return res.send({ success: false, error: "Error fetching workshops." });
+		return handleApiError(res, ROUTE, 'Data fetching workshops', err);
 	}
 }
 
@@ -140,9 +139,7 @@ exports.mapview = async function (req, res) {
 
 		return res.send({ success: true, results: results });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		logger.RaiseLogEvent(ROUTE, 'error', err, `Error fetching workshops`);
-		return res.send({ success: false, error: "Error fetching workshops." });
+		return handleApiError(res, ROUTE, 'Error fetching workshops', err);
 	}
 }
 
@@ -232,9 +229,7 @@ exports.nearbyZones = async function (req, res) {
 		return res.send({ success: true, results: results });
 
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		logger.RaiseLogEvent(ROUTE, 'error', err, `Error fetching zones.`);
-		return res.send({ success: false, error: "Error fetching zones." })
+		return handleApiError(res, ROUTE, 'Error fetching zones', err);
 	}
 }
 

@@ -2,6 +2,7 @@ const models = require('../../../models');
 const moment = require('moment');
 const { getInsightDump } = require('../../../lib/helpers/avolveHelper');
 const { Op } = require('sequelize');
+const { handleApiError } = require('../../middlewares/helper');
 
 exports.listDownloads = async function (req, res) {
 	const ROUTE = 'app/insights/listDownloads';
@@ -69,8 +70,6 @@ exports.listDownloads = async function (req, res) {
 		return res.send({ success: true, results: results });
 
 	} catch (error) {
-		console.log(`Error in ${ROUTE}: ${error}`);
-		logger.RaiseLogEvent(ROUTE, 'Error', error, 'Error fetching downloads');
-		return res.send({ success: false, error: 'error fetching downloads' });
+		return handleApiError(res, ROUTE, 'Error fetching downloads', error);
 	}
 }
