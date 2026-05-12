@@ -83,7 +83,8 @@ exports.list = async function (req, res) {
 			attributes: ['id', 'name', 'tname', 'phone1', 'email1', ...accountAttributes],
 			include: accountInclude,
 			where: accountWhere,
-			order: [['tname', 'asc']]
+			order: [['tname', 'asc']],
+			raw : true
 		});
 
 		return res.send({ success: true, results: Accounts });
@@ -358,7 +359,8 @@ exports.offerUpdate = async (req, res) => {
 				id: req.params.id,
 				AccountId: req.body.AccountId
 			},
-			order: [['createdAt', 'desc']]
+			order: [['createdAt', 'desc']],
+			raw : true
 		});
 
 		if (!AplOffer) {
@@ -1244,9 +1246,9 @@ exports.listPaykm = async function (req, res) {
 				AccountIdParent: res.locals.masterAccountId,
 				status: 1,
 				'details.payKm': true
-			}
+			},
+			raw : true
 		});
-
 		return res.send({ success: true, results: Accounts });
 	} catch (err) {
 		return handleApiError(res, ROUTE, 'Error in signInTrigger', err);

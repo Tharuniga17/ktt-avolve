@@ -14,7 +14,8 @@ exports.list = async function (req, res) {
 
 		const Geozones = await models.Geozone.findAll({
 			attributes: ['id', 'name', 'city', 'ztype', 'zoneCode'],
-			where: whereClause
+			where: whereClause,
+			raw : true
 		});
 
 		if (!Geozones) {

@@ -71,7 +71,8 @@ exports.countByGeozone = async function (req, res) {
 				date: {
 					[Op.gt]: moment().subtract(1, 'day').format('YYYY-MM-DD')
 				}
-			}
+			},
+			raw : true
 		});
 
 		let pendingSerCount = await models.ServiceBooking.count({
@@ -82,7 +83,8 @@ exports.countByGeozone = async function (req, res) {
 				date: {
 					[Op.gt]: moment().subtract(1, 'day').format('YYYY-MM-DD')
 				}
-			}
+			},
+			raw : true
 		});
 
 		results.push({
@@ -99,7 +101,8 @@ exports.countByGeozone = async function (req, res) {
 				date: {
 					[Op.lte]: moment().subtract(1, 'day').format('YYYY-MM-DD')
 				}
-			}
+			},
+			raw : true
 		});
 		//#endregion
 
@@ -111,7 +114,8 @@ exports.countByGeozone = async function (req, res) {
 				date: {
 					[Op.between]: [moment().format('YYYY-MM-DDT[00:00:00]Z'), moment().format('YYYY-MM-DDT[23:59:59]Z')]
 				}
-			}
+			},
+			raw : true
 		});
 
 		results.push({
@@ -291,7 +295,8 @@ exports.updateOdo = async function (req, res) { //n
 
 		let Asset = await models.Asset.findOne({
 			attributes: ['id', 'lplate', 'axleProfile', 'odo', 'axleConfig', 'details', 'AccountId'],
-			where: { id: req.params.id }
+			where: { id: req.params.id },
+			raw : true
 		});
 
 		if (!Asset) {
@@ -489,7 +494,8 @@ exports.listByUser = async function (req, res) {
 					AssetId: Assets.map(x => x.id),
 					transaction: 'Fitment',
 					AccountId: {[Op.in] : accountIds},
-				}
+				},
+				raw : true
 			});
 		}
 
@@ -1078,8 +1084,6 @@ exports.getVehicle = async function (req, res) {
 				required: true
 			}],
 			where: whereClause,
-			raw: true,
-			nest: true
 		});
 
 		if (!Asset) {
@@ -1217,7 +1221,8 @@ exports.getApolloFleetAsset = async function (req, res) {
 
 		let Account = await models.Account.findOne({
 			attributes: ['id', 'type', 'AccountIdParent'],
-			where: { id: res.locals.AccountId }
+			where: { id: res.locals.AccountId },
+			raw : true
 		});
 
 		if ([10, 11].indexOf(Account.type) == -1) {
@@ -1603,7 +1608,8 @@ exports.listCustomerAssets = async function (req, res) {
 			attributes: attributes,
 			include: assetInclude,
 			where: where,
-			order: [['lplate', 'ASC']]
+			order: [['lplate', 'ASC']],
+			raw : true
 		});
 
 		if (req.query.excel == 'true') {
@@ -1713,7 +1719,8 @@ exports.listAssets = async function (req, res) {
 			attributes: ['id', 'type', 'AccountIdParent'],
 			where: {
 				id: res.locals.AccountId
-			}
+			},
+			raw : true
 		});
 
 		if ([10, 11].indexOf(Account.type) == -1) {
@@ -1868,7 +1875,8 @@ exports.listAxleConfigs = async function (req, res) {
 			where: {
 				id: res.locals.AccountId,
 				type: [10, 11]
-			}
+			},
+			raw : true
 		});
 
 		if (!Account) {

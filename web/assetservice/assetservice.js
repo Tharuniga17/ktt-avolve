@@ -152,7 +152,8 @@ exports.listServiceStatus = async function (req, res) {
 			where: {
 				module: 'CRM',
 				name: 'Asset Service Status'
-			}
+			},
+			raw : true
 		});
 	
 		let status = SystemConfig.data && Object.keys(SystemConfig.data).length

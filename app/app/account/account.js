@@ -74,8 +74,10 @@ exports.listPaykm = async function (req, res) {
 				type: 11, // Avolve Customers
 				AccountIdParent: res.locals.masterAccountId,
 				status: 1,
-				'details.payKm': true
-			}
+				'details.payKm': true,
+				
+			},
+			raw : true
 		});
 
 		return res.send({ success: true, results: Accounts });
@@ -165,7 +167,8 @@ exports.listVendors = async function (req, res) {
 				AccountId: AccountId,
 				status: true
 			},
-			order: [['createdAt', 'desc']]
+			order: [['createdAt', 'desc']],
+			raw:true
 		});
 
 		const Dealers = await models.AplVendor.findAll({
@@ -508,7 +511,8 @@ exports.getServiceMaster = async function (req, res) {
 			where: {
 				id: req.params.id,
 				AccountIdParent: res.locals.masterAccountId
-			}
+			},
+			raw : true
 		});
 
 		if (!Account) {
@@ -1134,7 +1138,8 @@ exports.getAccount = async function (req, res) {
 				AccountIdParent: res.locals.AccountId,
 				status: 1,
 				id: req.params.id
-			}
+			},
+			raw : true
 		});
 
 		if (!Account) {
@@ -1147,6 +1152,7 @@ exports.getAccount = async function (req, res) {
 				serviceName: ['IP Check & Correction', 'Tyre & Vehicle Inspection', 'Tyre Rotation On Rim', 'Wheel Alignment', 'Wheel Rotation', 'Onboarding Service', 'Additional Service', 'Tyre Fitment', 'Tyre Onboarding'],
 				AccountId: req.params.id
 			},
+			raw : true
 		});
 
 		let results = [];
@@ -1889,7 +1895,8 @@ exports.getOfferConfig = async function (req, res) {
 				AccountId: res.locals.masterAccountId,
 				module: 'Avolve',
 				name: 'Offer Masters'
-			}
+			},
+			raw : true
 		});
 
 		let result = {};
@@ -2303,14 +2310,16 @@ exports.count = async function (req, res) {
 				status: 1, //active
 				'details.channel': 1,
 				id: accountIds
-			}
+			},
+			raw : true
 		});
 
 		let draft = await models.AplAccountDraft.count({
 			where: {
 				status: [1, 2], // drafted, partially completed
 				AccountId: accountIds
-			}
+			},
+			raw : true
 		});
 
 		return res.send({ success: true, result: { created: tisCreated, draft: draft } });
@@ -3019,7 +3028,8 @@ exports.getOfferWeb = async function (req, res) {
 			where: {
 				AccountId: req.params.id
 			},
-			order: [['createdAt', 'DESC']]
+			order: [['createdAt', 'DESC']],
+			raw : true
 		});
 
 		if (!AplOffer) {
@@ -3136,7 +3146,6 @@ exports.offerUpdate = async (req, res) => {
 			where: {
 				AccountId: AplOffer.AccountId
 			},
-			raw: true
 		});
 
 		if (Assets.length > req.body.vehicles) {

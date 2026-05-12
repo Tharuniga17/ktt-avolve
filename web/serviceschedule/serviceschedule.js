@@ -28,8 +28,6 @@ exports.list = async (req, res) => {
 				model: models.VehicleServiceType
 			}],
 			where: scheduleWhere,
-			raw: true,
-			nest: true
 		});
 
 		return res.send({ success: true, results: vehicleServiceSchedules });

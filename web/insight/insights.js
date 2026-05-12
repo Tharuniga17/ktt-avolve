@@ -241,7 +241,8 @@ exports.getInsights = async function (req, res) {
 			attributes: attributes,
 			where: insightWhere,
 			order: [['startTime', 'DESC']],
-			limit: limit
+			limit: limit,
+			raw : true
 		});
 
 		let results = [];
@@ -285,7 +286,8 @@ exports.getInsightsByType = async function (req, res) {
 				type: insightsTypes
 			},
 			order: [["startTime", "DESC"]],
-			limit: 40
+			limit: 40,
+			raw : true
 		});
 
 		if (!Insights) {

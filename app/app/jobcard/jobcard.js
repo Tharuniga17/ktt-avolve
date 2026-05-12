@@ -719,7 +719,8 @@ exports.assetJobHistById = async function (req, res) {
             attributes: ['id', 'lplate', 'AccountId', 'details'],
             where: {
                 id: req.params.id
-            }
+            },
+            raw : true
         });
 
         if (!Asset) {
@@ -731,12 +732,14 @@ exports.assetJobHistById = async function (req, res) {
             where: {
                 AssetId: Asset.id,
                 AccountId: Asset.AccountId
-            }
+            },
+            raw : true
         });
 
         let JobCards = await models.AplJobCard.findAll({
             where: whereClause,
-            order: [['createdAt', 'desc']]
+            order: [['createdAt', 'desc']],
+            raw : true
         });
 
         let serviceConsumptions = [];
@@ -875,7 +878,8 @@ exports.get = async function (req, res) {
             where: {
                 AssetId: AplJobCard.AssetId,
                 'lastStatus.position': { [Op.notIn]: ignorePositions }
-            }
+            },
+            raw : true
         });
 
         let services = JSON.parse(JSON.stringify(AplJobCard.services));
@@ -1028,7 +1032,8 @@ exports.getLog = async function (req, res) {
                 attributes: ['id', 'status', 'type'],
                 model: models.ServiceBooking
             }],
-            where: whereClause
+            where: whereClause,
+            raw : true
         });
 
         if (!AplJobCard) {
@@ -1040,7 +1045,8 @@ exports.getLog = async function (req, res) {
             where: {
                 AplJobCardId: AplJobCard.id,
                 type: 'v'
-            }
+            },
+            raw : true
         });
 
         let result = {
@@ -2087,7 +2093,8 @@ exports.getJobCardbyAsset = async function (req, res) {
                 AssetId: Asset.id,
                 AccountId: Asset.AccountId
             },
-            order: [['id', 'desc']]
+            order: [['id', 'desc']],
+            raw : true
         });
 
         if (AplJobCard) {

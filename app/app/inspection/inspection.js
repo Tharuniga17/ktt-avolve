@@ -350,7 +350,8 @@ exports.nearbyZones = async function (req, res) {
 			attributes: [
 				'id', 'ztype', 'type', 'name', 'zoneCode', 'geojson',
 				'scale', 'fullName', 'address', 'city', 'phone', 'area'],
-			where: whereClause
+			where: whereClause,
+			raw : true
 		});
 
 		let fteZones = await models.Geozone.findAll({
@@ -360,7 +361,8 @@ exports.nearbyZones = async function (req, res) {
 			where: {
 				id: geoZoneIds,
 				activeStatus: true
-			}
+			},
+			raw : true
 		});
 
 		var zoneRadius = 1; // in KM
@@ -397,7 +399,8 @@ exports.listObservations = async function (req, res) {
 			where: {
 				module: 'Apollo Fleet',
 				name: 'Vehicle Observations'
-			}
+			},
+			raw : true
 		});
 
 		if (!systemConfig) {
@@ -429,7 +432,8 @@ exports.assetLastInspection = async function (req, res) {
 				where: {
 					id: req.params.id,
 					plan: 1
-				}
+				},
+				raw : true
 			});
 
 			if (!Asset) {
@@ -444,7 +448,8 @@ exports.assetLastInspection = async function (req, res) {
 
 		let result = await models.Inspection.findOne({
 			where: whereClause,
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		if (!result) {
@@ -471,7 +476,8 @@ exports.assetLastConsolidateInspection = async function (req, res) {
 				where: {
 					id: req.params.id,
 					plan: 1
-				}
+				},
+				raw : true
 			});
 
 			if (!Asset) {
@@ -490,7 +496,8 @@ exports.assetLastConsolidateInspection = async function (req, res) {
 				type: 'v',
 				AccountId: AccountId
 			},
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		let inspectWhere = {
@@ -505,7 +512,8 @@ exports.assetLastConsolidateInspection = async function (req, res) {
 		let vehicleDraftInspection = await models.Inspection.findOne({
 			attributes: { exclude: ['date'] },
 			where: inspectWhere,
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		VehicleInpsect = JSON.parse(JSON.stringify(VehicleInpsect));
@@ -528,7 +536,8 @@ exports.assetLastConsolidateInspection = async function (req, res) {
 				date: { [Op.lt]: VehicleInpsect.date },
 				AccountId: AccountId
 			},
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		let TyreInspect = await models.Inspection.findOne({
@@ -538,7 +547,8 @@ exports.assetLastConsolidateInspection = async function (req, res) {
 				date: { [Op.gte]: VehicleInpsect.date },
 				AccountId: AccountId
 			},
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		let prevTyreInspect = await models.Inspection.findOne({
@@ -548,7 +558,8 @@ exports.assetLastConsolidateInspection = async function (req, res) {
 				date: { [Op.lt]: VehicleInpsect.date },
 				AccountId: AccountId
 			},
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		let result = {
@@ -578,7 +589,8 @@ exports.assetInspectionHistById = async function (req, res) {
 				where: {
 					id: req.params.id,
 					plan: 1
-				}
+				},
+				raw : true
 			});
 
 			if (!Asset) {
@@ -764,7 +776,8 @@ exports.inspectionHistory = async function (req, res) {
 				date: { [Op.lt]: VehicleInpsect.date },
 				AccountId: VehicleInpsect.AccountId
 			},
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		let TyreInspect = await models.Inspection.findOne({
@@ -774,7 +787,8 @@ exports.inspectionHistory = async function (req, res) {
 				date: { [Op.gte]: VehicleInpsect.date },
 				AccountId: VehicleInpsect.AccountId
 			},
-			order: [['date', 'asc']]
+			order: [['date', 'asc']],
+			raw : true
 		});
 
 		let prevTyreInspect = await models.Inspection.findOne({
@@ -784,7 +798,8 @@ exports.inspectionHistory = async function (req, res) {
 				date: { [Op.lt]: VehicleInpsect.date },
 				AccountId: VehicleInpsect.AccountId
 			},
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		VehicleInpsect = JSON.parse(JSON.stringify(VehicleInpsect));
@@ -826,7 +841,8 @@ exports.inspectionHistory = async function (req, res) {
 			where: {
 				id: {[Op.in]: histIds},
 				AccountId: VehicleInpsect.AccountId
-			}
+			},
+			raw : true
 		});
 
 		if (TyreInspect && TyreInspect.details && TyreInspect.details.tyres) {
@@ -1045,7 +1061,8 @@ exports.getTyreVerification = async (req, res) => {
 
 		const Asset = await models.Asset.findOne({
 			attributes: ['id', 'lplate', 'AccountId', 'details', 'axleProfile', 'odo'],
-			where: { id: req.params.id }
+			where: { id: req.params.id },
+			raw : true
 		});
 
 		if (!Asset) {
@@ -1059,7 +1076,8 @@ exports.getTyreVerification = async (req, res) => {
 				AccountId: Asset.AccountId,
 				type: ['v', 'vd']
 			},
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		const tyreVerification = await models.Inspection.findOne({
@@ -1069,7 +1087,8 @@ exports.getTyreVerification = async (req, res) => {
 				AccountId: Asset.AccountId,
 				type: ['tv']
 			},
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		if (!tyreVerification || !tyreVerification.details || !tyreVerification.details.tyres || !tyreVerification.details.tyres.length) {
@@ -1082,7 +1101,8 @@ exports.getTyreVerification = async (req, res) => {
 				type: 't',
 				date: { [Op.gte]: moment().subtract(72, 'hours').toISOString() },
 				AccountId: Asset.AccountId
-			}
+			},
+			raw : true
 		});
 
 		let vehicleDraftInspection = vehInspection && vehInspection.type == 'vd' ? vehInspection : {};
@@ -1177,7 +1197,8 @@ exports.getInspectionSteps = async (req, res) => {
 
 		let Asset = await models.Asset.findOne({
 			attributes: ['id', 'AccountId'],
-			where: { id: req.params.id }
+			where: { id: req.params.id },
+			raw : true
 		});
 
 		if (!Asset) {
@@ -1189,7 +1210,8 @@ exports.getInspectionSteps = async (req, res) => {
 			where: {
 				id: req.query.ServiceBookingId,
 				AssetId: Asset.id
-			}
+			},
+			raw : true
 		});
 
 		if (!ServiceBooking) {
@@ -1211,7 +1233,8 @@ exports.getInspectionSteps = async (req, res) => {
 		const vehInspection = await models.Inspection.findOne({
 			attributes: ['id', 'date'],
 			where: { ...InspectionWhere, ...{ type: ['vd', 'v'] } },
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		let tyreVerification = {};
@@ -1222,12 +1245,14 @@ exports.getInspectionSteps = async (req, res) => {
 			tyreVerification = await models.Inspection.findOne({
 				attributes: ['id', 'details'],
 				where: { ...InspectionWhere, ...{ type: ['tv'] }, },
-				order: [['date', 'desc']]
+				order: [['date', 'desc']],
+				raw : true
 			});
 
 			tyreInspection = await models.Inspection.count({
 				where: { ...InspectionWhere, ...{ type: ['t'] } },
-				order: [['date', 'desc']]
+				order: [['date', 'desc']],
+				raw : true
 			});
 		}
 
@@ -1420,7 +1445,8 @@ exports.xeGetInspectionSteps = async (req, res) => {
 
 		let Asset = await models.Asset.findOne({
 			attributes: ['id', 'AccountId'],
-			where: { id: req.params.id }
+			where: { id: req.params.id },
+			raw : true
 		});
 
 		if (!Asset) {
@@ -1437,7 +1463,8 @@ exports.xeGetInspectionSteps = async (req, res) => {
 		const vehInspection = await models.Inspection.findOne({
 			attributes: ['id', 'date'],
 			where: { ...InspectionWhere, ...{ type: ['vd', 'v'] } },
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		let tyreVerification = {};
@@ -1448,12 +1475,14 @@ exports.xeGetInspectionSteps = async (req, res) => {
 			tyreVerification = await models.Inspection.findOne({
 				attributes: ['id', 'details'],
 				where: { ...InspectionWhere, ...{ type: ['tv'] }, },
-				order: [['date', 'desc']]
+				order: [['date', 'desc']],
+				raw : true
 			});
 
 			tyreInspection = await models.Inspection.count({
 				where: { ...InspectionWhere, ...{ type: ['t'] } },
-				order: [['date', 'desc']]
+				order: [['date', 'desc']],
+				raw : true
 			});
 		}
 
@@ -1502,7 +1531,8 @@ exports.xeGetTyreVerification = async (req, res) => {
 
 		const Asset = await models.Asset.findOne({
 			attributes: ['id', 'lplate', 'AccountId', 'details', 'axleProfile', 'odo'],
-			where: { id: req.params.id }
+			where: { id: req.params.id },
+			raw : true
 		});
 
 		if (!Asset) {
@@ -1516,7 +1546,8 @@ exports.xeGetTyreVerification = async (req, res) => {
 				AccountId: Asset.AccountId,
 				type: ['v', 'vd']
 			},
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		const tyreVerification = await models.Inspection.findOne({
@@ -1527,7 +1558,8 @@ exports.xeGetTyreVerification = async (req, res) => {
 				date: { [Op.gte]: vehInspection.date },
 				type: ['tv']
 			},
-			order: [['date', 'desc']]
+			order: [['date', 'desc']],
+			raw : true
 		});
 
 		if (!tyreVerification || !tyreVerification.details || !tyreVerification.details.tyres || !tyreVerification.details.tyres.length) {
@@ -1540,7 +1572,8 @@ exports.xeGetTyreVerification = async (req, res) => {
 				type: 't',
 				date: { [Op.gte]: moment().subtract(72, 'hours').toISOString() },
 				AccountId: Asset.AccountId
-			}
+			},
+			raw : true
 		});
 
 		let vehicleDraftInspection = vehInspection && vehInspection.type == 'vd' ? vehInspection : {};

@@ -44,7 +44,8 @@ exports.listByRole = async function (req, res) {
 
 		let Geozones = await models.Geozone.findAll({
 			attributes: ['id', 'name', 'zoneCode', 'ztype', 'center'],
-			where: whereClause
+			where: whereClause,
+			raw : true
 		});
 
 		let results = [];
@@ -104,7 +105,8 @@ exports.mapview = async function (req, res) {
 
 		let Geozones = await models.Geozone.findAll({
 			attributes: ['id', 'name', 'zoneCode', 'ztype', 'center', 'accountIds', 'address'],
-			where: geozoneWhere
+			where: geozoneWhere,
+			raw : true
 		});
 
 
@@ -154,7 +156,8 @@ exports.nearbyZones = async function (req, res) {
 			attributes: ['id', 'tripConfig', 'details'],
 			where: {
 				id: res.locals.AccountId
-			}
+			},
+			raw : true
 		});
 
 		if (!Account) {
@@ -196,7 +199,8 @@ exports.nearbyZones = async function (req, res) {
 			attributes: [
 				'id', 'ztype', 'type', 'name', 'zoneCode', 'geojson',
 				'scale', 'fullName', 'address', 'city', 'phone', 'area', 'accountIds', 'center'],
-			where: whereClause
+			where: whereClause,
+			raw : true
 		});
 
 		let results = [];

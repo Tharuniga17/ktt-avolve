@@ -32,7 +32,8 @@ exports.iosDashboard = async function (req, res) {
 				year: moment(sdate).format('YYYY'),
 				AccountId: AccountId,
 				UserId: null
-			}
+			},
+			raw : true
 		});
 
 		//#region service 2.0
@@ -208,7 +209,8 @@ exports.salesDashboard = async function (req, res) {
 				year: moment(sdate).format('YYYY'),
 				AccountId: activeAccIds,
 				UserId: null
-			}
+			},
+			raw : true
 		});
 
 		let serviceSummary = serviceSummarySalesStruct();
@@ -742,7 +744,8 @@ exports.salesInventoryAlerts = async function (req, res) {
 			attributes: ['id', 'name', 'tname', 'details', 'status'],
 			where: {
 				id: {[Op.in] : accountIds}
-			}
+			},
+			raw : true
 		});
 
 		let Tyres = await models.Tyre.findAll({
@@ -753,7 +756,8 @@ exports.salesInventoryAlerts = async function (req, res) {
 					[Op.gte]: 0, [Op.lte]: 4
 				},
 				tyreStatus: { [Op.notIn]: [3, 6] }
-			}
+			},
+			raw : true
 		});
 
 		let fteUsers = await avolveHelper.getFteUsersByCustomers(accountIds, false, res.locals.masterAccountId);
@@ -768,7 +772,8 @@ exports.salesInventoryAlerts = async function (req, res) {
 				AccountId: {[Op.in] : accountIds},
 				status: 'Active'
 			},
-			order: [['id', 'desc']]
+			order: [['id', 'desc']],
+			raw : true
 		});
 
 		let inventoryAlerts = [];
@@ -884,7 +889,8 @@ exports.salesPaymentAlerts = async function (req, res) {
 				AccountId: {[Op.in]:accountIds},
 				status: 'Active'
 			},
-			order: [['id', 'desc']]
+			order: [['id', 'desc']],
+			raw : true
 		});
 
 		let AplInvoices = await models.AplInvoice.findAll({
@@ -1015,7 +1021,8 @@ exports.listMonthlySummary = async function (req, res) {
 					{ UserId: null }
 				]
 			},
-			order: [['year', 'DESC'], ['month', 'DESC']]
+			order: [['year', 'DESC'], ['month', 'DESC']],
+			raw : true
 		});
 
 		let results = [];
@@ -1061,7 +1068,8 @@ exports.getMonthlySummary = async function (req, res) {
 			where: {
 				id: req.params.id
 			},
-			order: [['year', 'DESC'], ['month', 'DESC']]
+			order: [['year', 'DESC'], ['month', 'DESC']],
+			raw : true
 		});
 
 		let monthlySummary = AplReport && AplReport.details && AplReport.details.ms || {};
@@ -1100,7 +1108,7 @@ exports.updateKamNote = async function (req, res) {
 			where: {
 				id: req.params.id
 			},
-			order: [['year', 'DESC'], ['month', 'DESC']]
+			order: [['year', 'DESC'], ['month', 'DESC']],
 		});
 
 		if (!AplReport) {
@@ -1153,7 +1161,8 @@ exports.downloadMonthlySummary = async function (req, res) {
 			where: {
 				id: req.params.id
 			},
-			order: [['year', 'DESC'], ['month', 'DESC']]
+			order: [['year', 'DESC'], ['month', 'DESC']],
+			raw : true
 		});
 
 		let monthlySummary = AplReport && AplReport.details && AplReport.details.ms || {};
@@ -1405,7 +1414,6 @@ exports.avolveScrapAnalytics = async function (req, res) {
 				}
 			}],
 			where: whereClause,
-			raw: true
 		});
 
 		let tyreMakeModels = await models.TyreMakeModel.findAll({
@@ -1446,7 +1454,8 @@ exports.avolveScrapAnalytics = async function (req, res) {
 				AccountId: res.locals.masterAccountId,
 				module: 'Avolve',
 				name: 'Tyre Masters'
-			}
+			},
+			raw : true
 		});
 
 		let scrapAnalytics = {
@@ -1641,8 +1650,6 @@ exports.downloadAvolveCustomers = async function (req, res) {
 			where: {
 				AccountId: {[Op.in] : accountIds}
 			},
-			raw: true,
-			nest: true
 		});
 
 		const unPaidInvoicesMap = {};

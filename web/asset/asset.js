@@ -152,6 +152,7 @@ exports.getSelect = async function (req, res) {
 			attributes: [...attributes],
 			include: AssetInclude,
 			where: { id: req.params.id },
+			raw : true
 		});
 
 		return res.send({ success: true, result: Asset });
@@ -401,7 +402,8 @@ exports.getAxleProfiles = async function (req, res) {
 			where: {
 				id: res.locals.AccountId,
 				type: [10, 11]
-			}
+			},
+			raw : true
 		});
 
 		if (!Account) {
