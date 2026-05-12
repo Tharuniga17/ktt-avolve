@@ -2,13 +2,11 @@ const models = require('../../../models');
 const evt = require('../../../lib/event');
 const moment = require('moment');
 const { RaiseLogEvent } = require('../../../lib/helpers/rmqlog');
-const { handleApiError } = require('../../middlewares/helper');
+
 const { validateJson } = require('../../middlewares/helper');
 const avolveHelper = require('../../../lib/helpers/avolveHelper');
 
-
 exports.createInsight = async function (req, res) {
-	const ROUTE = 'web/insights/createInsight';
 	try {
 		const validation = validateJson(req, 'insightsInput');
 		if (!validation.valid) {
@@ -52,7 +50,9 @@ exports.createInsight = async function (req, res) {
 		);
 		return res.send({ success: true, result: Insight });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error creating insightsr', error);
+		console.log(`createInsight error:`, error);
+		RaiseLogEvent('api/insights/createInsight', 'error', error, 'Error creating insights');
+		return res.send({ success: false, error: 'Internal error' });
 	}
 }
 
@@ -202,7 +202,6 @@ function validateInsightInput(insightsInputReqObj) {
 }
 
 exports.getInsights = async function (req, res) {
-	const ROUTE = 'web/insights/getInsights';
 	try {
 		let insightsTypes;
 		if (req.params.type && req.params.type != 'multiple') {
@@ -262,12 +261,13 @@ exports.getInsights = async function (req, res) {
 		return res.send({ success: true, results: results });
 
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching insights', error);
+		console.log('api/insights/getInsights Error', error);
+		RaiseLogEvent('api/insights/getInsights', 'Error', error, 'Error fetching insights');
+		return res.send({ success: false, error: error });
 	}
 }
 
 exports.getInsightsByType = async function (req, res) {
-	const ROUTE = 'web/insights/getInsightsByType ';
 	try {
 		let insightsTypes;
 
@@ -294,6 +294,8 @@ exports.getInsightsByType = async function (req, res) {
 
 		return res.send({ success: true, results: Insights });
 	} catch (error) {
-		return handleApiError(res, ROUTE, 'Error fetching insights', error);
+		console.log('api/insights/getInsightsByType Error: ', error);
+		RaiseLogEvent('api/insights/getInsightsByType', 'Error', error, 'Error fetching insights');
+		return res.send({ success: false, error: error });
 	}
 }
