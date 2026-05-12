@@ -4,6 +4,7 @@ const { formatByRegion } = require('../../../lib/dateFormatter');
 const { handleApiError } = require('../../middlewares/helper');
 const { Op } = require('sequelize');
 
+
 exports.list = async (req, res) => {
 	const ROUTE = 'app/serviceschedules/list';
 	try {

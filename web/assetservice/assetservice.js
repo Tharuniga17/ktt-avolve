@@ -49,8 +49,6 @@ exports.get = async function (req, res) {
 
 		return res.send({ success: true, assetService: AssetService });
 	} catch (err) {
-		RaiseLogEvent(`${ROUTE}`, req.params.id, null, `Error in assetService get API: ${err} ${err.stack}`);
-		console.log(`Error in ${ROUTE}:  ${err}`);
 		return handleApiError(res, ROUTE, 'Error fetching asset service data', err);
 	}
 }

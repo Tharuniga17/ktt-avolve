@@ -232,7 +232,7 @@ exports.assignCustomer = async function (req, res) {
 		}
 
 		await Geozone.update({
-			accountIds: accountIds
+			accountIds: {[Op.in]: accountIds}
 		});
 
 		return res.send({ success: true, geozone: Geozone });

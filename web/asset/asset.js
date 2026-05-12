@@ -7,6 +7,7 @@ const axleConfigAvolve = require('../../../config/axleConfig-apollo.json');
 const { handleApiError } = require('../../middlewares/helper');
 
 exports.listSelect = async function (req, res) {
+	const ROUTE = 'web/assets/listSelect';
 	try {
 		const whereClause = {
 			AccountId: res.locals.AccountId,
@@ -74,13 +75,12 @@ exports.listSelect = async function (req, res) {
 
 		return res.send({ success: true, results: Assets });
 	} catch (error) {
-		console.log(`Error in assets/listSelect`, error);
-		RaiseLogEvent('assets/listSelect', 'error', error, 'Error fetching assets');
-		return res.send({ success: false, error: "Error in fetching assets!" });
+		return handleApiError(res, ROUTE, 'Error fetching assets', error);
 	}
 }
 
 exports.getSelect = async function (req, res) {
+	const ROUTE = 'web/assets/getSelect';
 	try {
 		if (!req.params.id) {
 			return res.send({ success: false, error: 'Missing input parameter' });
@@ -156,9 +156,7 @@ exports.getSelect = async function (req, res) {
 
 		return res.send({ success: true, result: Asset });
 	} catch (error) {
-		console.log(`Error in assets/listSelect`, error);
-		RaiseLogEvent('assets/listSelect', 'error', error, 'Error fetching assets');
-		return res.send({ success: false, error: "Error in fetching assets!" });
+		return handleApiError(res, ROUTE, 'Error in syncing IP master', error);
 	}
 }
 
@@ -217,6 +215,7 @@ function buildWhereClause(accountIds, query, locals) {
 }
 
 exports.list = async (req, res) => {
+	const ROUTE = 'web/assets/list';
 	try {
 		const accountIds = await resolveAccountIds(res.locals, req.query);
 		const { where, includes } = buildWhereClause(accountIds, req.query, res.locals);
@@ -270,6 +269,7 @@ exports.list = async (req, res) => {
 }
 
 exports.count = async (req, res) => {
+	const ROUTE = 'web/asset/count';
 	try {
 		return res.send({
 			success: true,
@@ -366,9 +366,7 @@ exports.count = async (req, res) => {
 			}
 		});
 	} catch (error) {
-		console.error('Error in assets/countWeb', error);
-		RaiseLogEvent('assets/countWeb', 'error', error, 'Error fetching asset counts');
-		return res.send({ success: false, error: 'Error fetching asset counts' });
+		return handleApiError(res, ROUTE, 'Error fetching asset counts', error);
 	}
 };
 
@@ -390,9 +388,7 @@ exports.getAxleConfigs = async function (req, res) {
 
 		return res.send({ success: true, axleConfig: axleConfigAvolve });
 	} catch (error) {
-		console.log(`Error in ${ROUTE} :`, error);
-		RaiseLogEvent(ROUTE, 'error', error, 'Error fetching axle config.');
-		return res.send({ success: false, error: 'Error fetching axle config.' });
+		return handleApiError(res, ROUTE, 'Error fetching axle config', error);
 	}
 }
 
@@ -422,13 +418,12 @@ exports.getAxleProfiles = async function (req, res) {
 
 		return res.send({ success: true, results: axleProfiles });
 	} catch (err) {
-		console.log(`Error in ${ROUTE}: ${err}`);
-		RaiseLogEvent(ROUTE, 'error', err, `Error fetching axle profile.`);
-		return res.send({ success: false, error: 'Error fetching axle profile.' });
+		return handleApiError(res, ROUTE, 'Error fetching axle profile', err);
 	}
 }
 
 exports.payKmList = async function (req, res) {
+	const ROUTE = 'web/assets/payKmList';
 	try {
 		if (res.locals.AccountId != res.locals.masterAccountId) { // Avolve
 			return res.send({ success: false, error: 'Not authorized to this API' });
@@ -635,6 +630,6 @@ exports.listPaykmVehicles = async function (req, res) {
 
 		return res.send({ success: true, results: Assets });
 	} catch (err) {
-		return handleApiError(res, ROUTE, 'Error fetching list paykm vehicles', error);
+		return handleApiError(res, ROUTE, 'Error fetching list paykm vehicles', err);
 	}
 }

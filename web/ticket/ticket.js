@@ -6,18 +6,19 @@ const avolveTicketConfig = require('../../../config/avolve-ticketConfig.json');
 const { getAccount } = require('../../../lib/helpers/redis')
 const evt = require('../../../lib/event');
 const md5 = require('../../../lib/md5').md5;
+const { handleApiError } = require('../../middlewares/helper');
 
 exports.getCaseTypes = async (req, res) => {
+	const ROUTE = 'web/tickets/getCaseTypes';
 	try {
 		return res.send({ success: true, results: avolveTicketConfig.caseTypes || [] });
 	} catch (error) {
-		console.log(`avolve/ticket/getCaseTypes: ${error}`);
-		RaiseLogEvent('avolve/ticket/getCaseTypes', 'error', error, 'Error fetching case types.');
-		return res.send({ success: false, error: 'Error fetching case types.' });
+		return handleApiError(res, ROUTE, 'Error fetching case types', error);
 	}
 }
 
 exports.create = async (req, res) => {
+	const ROUTE = 'web/tickets/create';
 	try {
 		RaiseLogEvent('avolve/ticket/create', res.locals.AccountId, req.body, `Requested by ${res.locals.userFullName || res.locals.username}.`);
 		if (req.body.AccountId) {
@@ -145,13 +146,12 @@ exports.create = async (req, res) => {
 
 		return res.send({ success: true });
 	} catch (error) {
-		console.log(`avolve/ticket/create: ${error}`);
-		RaiseLogEvent('avolve/ticket/create', 'error', error, 'Error fetching ticket create.');
-		return res.send({ success: false, error: 'Error creating ticket.' });
+		return handleApiError(res, ROUTE, 'Error fetching ticket create', error);
 	}
 };
 
 exports.list = async (req, res) => {
+	const ROUTE = 'web/tickets/list';
 	try {
 		RaiseLogEvent('avolve/ticket/list', res.locals.AccountId, req.body, `Requested by ${res.locals.username}.`);
 
@@ -202,13 +202,12 @@ exports.list = async (req, res) => {
 
 		return res.send({ success: true, results: AplTickets });
 	} catch (error) {
-		console.log(`avolve/ticket/list: ${error}`);
-		RaiseLogEvent('avolve/ticket/list', 'error', error, 'Error fetching the tickets.');
-		return res.send({ success: false, error: 'Error fetching the tickets.' });
+		return handleApiError(res, ROUTE, 'Error fetching the tickets', error);
 	}
 }
 
 exports.get = async (req, res) => {
+	const ROUTE = 'web/tickets/get';
 	try {
 		RaiseLogEvent('avolve/ticket/get', res.locals.AccountId, req.body, `Requested by ${res.locals.username}.`);
 
@@ -237,13 +236,12 @@ exports.get = async (req, res) => {
 
 		return res.send({ success: true, result: AplTicket });
 	} catch (error) {
-		console.log(`avolve/ticket/get: ${error}`);
-		RaiseLogEvent('avolve/ticket/get', 'error', error, 'Error fetching the ticket.');
-		return res.send({ success: false, error: 'Error fetching the ticket.' });
+		return handleApiError(res, ROUTE, 'Error fetching the ticket', error);
 	}
 }
 
 exports.update = async (req, res) => {
+	const ROUTE = 'web/tickets/update';
 	try {
 		RaiseLogEvent('avolve/ticket/update', res.locals.AccountId, req.body, `Requested by ${res.locals.username}.`);
 		if (!req.params.id) {
@@ -316,13 +314,12 @@ exports.update = async (req, res) => {
 
 		return res.send({ success: true });
 	} catch (error) {
-		console.log(`avolve/ticket/update: ${error}`);
-		RaiseLogEvent('avolve/ticket/update', 'error', error, 'Error updating ticket.');
-		return res.send({ success: false, error: 'Error updating ticket.' });
+		return handleApiError(res, ROUTE, 'Error updating ticket', error);
 	}
 }
 
 exports.updateStatus = async (req, res) => {
+	const ROUTE = 'avolve/ticket/updateStatus';
 	const LOG_KEY = 'avolve/ticket/updateStatus';
 	try {
 		RaiseLogEvent(LOG_KEY, res.locals.AccountId, req.body, `Requested by ${res.locals.username}.`);
@@ -437,13 +434,12 @@ exports.updateStatus = async (req, res) => {
 
 		return res.send({ success: true });
 	} catch (error) {
-		console.error(`Error in ${LOG_KEY}:`, error);
-		RaiseLogEvent(LOG_KEY, 'error', error, 'Error updating ticket status.');
-		return res.send({ success: false, error: 'Error updating ticket status.' });
+		return handleApiError(res, ROUTE, 'Error updating ticket status', error);
 	}
 }
 
 exports.count = async (req, res) => {
+	const ROUTE = 'web/tickets/count';
 	try {
 		let ticketWhere = {};
 		if (req.query.AccountId) {
@@ -499,9 +495,7 @@ exports.count = async (req, res) => {
 		return res.send({ success: true, result });
 
 	} catch (error) {
-		console.log(`avolve/ticket/count: ${error}`);
-		RaiseLogEvent('avolve/ticket/count', 'error', error, 'Error calculating ticket stats.');
-		return res.send({ success: false, error: 'Error calculating ticket stats.' });
+		return handleApiError(res, ROUTE, 'Error calculating ticket stats', error);
 	}
 };
 
